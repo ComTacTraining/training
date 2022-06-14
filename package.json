@@ -17,6 +17,7 @@
     "@fontsource/roboto": "^4.5.7",
     "@mui/material": "^5.8.3",
     "aws-amplify": "^4.3.24",
+    "microphone-stream": "^6.0.1",
     "next": "12.1.6",
     "react": "18.1.0",
     "react-dom": "18.1.0"

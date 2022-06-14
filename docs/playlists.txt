@@ -1,0 +1,6 @@
+Black video backdrop
+
+Playlist 1 (Title Screen to black): intro
+Playlist 2 (Alpha Side without Title Screen): loop (repeat)
+PLaylist 3 (After First Alarm): approach, [Playlist 2]
+Playlist 4 (After Initial Report): bravo, charlie, delta, alpha, [Playlist 2]
