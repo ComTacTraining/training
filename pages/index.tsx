@@ -7,17 +7,109 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import * as React from 'react'
+import mic from 'microphone-stream'
+import * as marshaller from '@aws-sdk/eventstream-marshaller'
+import * as util_utf8_node from '@aws-sdk/util-utf8-node'
+
+const eventStreamMarshaller = new marshaller.EventStreamMarshaller(
+  util_utf8_node.toUtf8,
+  util_utf8_node.fromUtf8
+)
 
 const Home: NextPage = () => {
-  const [stage, setStage] = React.useState('first-alarm')
-  const [firstAlarm, setFirstAlarm] = React.useState(false)
-  const [engine2Arrival, setEngine2Arrival] = React.useState(false)
-  const [truck1Arrival, setTruck1Arrival] = React.useState(false)
-  const [engine3Arrival, setEngine3Arrival] = React.useState(false)
-  const [incident, setIncident] = React.useState(false)
-  const [chiefArrival, setChiefArrival] = React.useState(false)
+  const ws = React.useRef<WebSocket | null>(null)
 
+  const [url, setUrl] = React.useState('')
+  const [isPaused, setIsPaused] = React.useState(false)
+  const [stage, setStage] = React.useState('')
   const [audioCtx, setAudioCtx] = React.useState<AudioContext | null>(null)
+
+  React.useEffect(() => {
+    const getUrl = async () => {
+      try {
+        const response = await fetch('/api/stt', {
+          method: 'POST',
+          mode: 'same-origin'
+        })
+        const resUrl = await response.json()
+        setUrl(resUrl.url)
+      } catch (error) {
+        console.log(`Unable to fetch websocket url`)
+      }
+    }
+
+    if (url === '') {
+      getUrl()
+    }
+  }, [url])
+
+  React.useEffect(() => {
+    if (url === '') {
+      return
+    }
+    ws.current = new WebSocket(url)
+    ws.current.onopen = () => {
+      console.log('[Web Socket Opened]')
+    }
+    ws.current.onclose = () => {
+      console.log('[Web Socket Closed]')
+    }
+
+    const currWebSocket = ws.current
+
+    return () => {
+      currWebSocket.close()
+    }
+  }, [url])
+
+  React.useEffect(() => {
+    if (!ws.current) return
+
+    console.log('websocket is ready')
+
+    ws.current.onmessage = (e) => {
+      const message = JSON.parse(e.data)
+      console.log('e', message)
+    }
+
+    ws.current.onmessage = (message) => {
+      if (isPaused) return
+      //convert the binary event stream message to JSON
+      const messageWrapper = eventStreamMarshaller.unmarshall(
+        Buffer.from(message.data)
+      )
+
+      if (messageWrapper.headers[':message-type'].value === 'event') {
+        const messageBody = JSON.parse(
+          String.fromCharCode.apply(String, Array.from(messageWrapper.body))
+        )
+        // handleEventStreamMessage(messageBody)
+      } else {
+        console.log('[Websocket message type is not an event]')
+        // transcribeException = true
+        // showError(messageBody.Message)
+        // toggleStartStop()
+      }
+    }
+
+    ws.current.onerror = function () {
+      console.error('WebSocket connection error. Try again.')
+    }
+
+    // ws.current.onclose = function (closeEvent) {
+    //   micStream.stop()
+
+    //   // the close event immediately follows the error event; only handle one.
+    //   if (!socketError && !transcribeException) {
+    //     if (closeEvent.code != 1000) {
+    //       showError(
+    //         '</i><strong>Streaming Exception</strong><br>' + closeEvent.reason
+    //       )
+    //     }
+    //     toggleStartStop()
+    //   }
+    // }
+  }, [isPaused])
 
   React.useEffect(() => {
     try {
@@ -31,6 +123,24 @@ const Home: NextPage = () => {
       console.log(e)
     }
   }, [])
+
+  // const handleEventStreamMessage = (messageJson) => {
+  //   let results = messageJson.Transcript.Results
+  //   if (results.length > 0) {
+  //     if (results[0].Alternatives.length > 0) {
+  //       let transcript = results[0].Alternatives[0].Transcript
+
+  //       transcript = decodeURIComponent(escape(transcript))
+  //       setCurrentTranscript(transcript)
+  //       if (!results[0].IsPartial) {
+  //         setLastTranscript(
+  //           (prevLastTranscript) => prevLastTranscript + ' ' + transcript
+  //         )
+  //         setCurrentTranscript('')
+  //       }
+  //     }
+  //   }
+  // }
 
   const tts = React.useCallback(
     async (text: string, voiceId: string) => {
