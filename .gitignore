@@ -8,6 +8,10 @@
 # testing
 /coverage
 
+# database
+/prisma/db.sqlite
+/prisma/db.sqlite-journal
+
 # next.js
 /.next/
 /out/
@@ -26,6 +30,7 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
+.env
 .env*.local
 
 # vercel
@@ -33,24 +38,3 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-
-#amplify-do-not-edit-begin
-amplify/\#current-cloud-backend
-amplify/.config/local-*
-amplify/logs
-amplify/mock-data
-amplify/backend/amplify-meta.json
-amplify/backend/.temp
-build/
-dist/
-node_modules/
-#aws-exports.js
-awsconfiguration.json
-amplifyconfiguration.json
-amplifyconfiguration.dart
-amplify-build-config.json
-amplify-gradle-config.json
-amplifytools.xcconfig
-.secret-*
-**.sample
-#amplify-do-not-edit-end
