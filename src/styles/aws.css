@@ -1,0 +1,65 @@
+.background-radial-gradient {
+  background-color: hsl(347, 99%, 36%);
+  background-image: radial-gradient(
+      650px circle at 0% 0%,
+      hsl(347, 99%, 35%) 15%,
+      hsl(347, 99%, 30%) 35%,
+      hsl(347, 99%, 20%) 75%,
+      hsl(347, 99%, 19%) 80%,
+      transparent 100%
+    ),
+    radial-gradient(
+      1250px circle at 100% 100%,
+      hsl(347, 99%, 45%) 15%,
+      hsl(347, 99%, 30%) 35%,
+      hsl(347, 99%, 20%) 75%,
+      hsl(347, 99%, 19%) 80%,
+      transparent 100%
+    );
+}
+#pricing-block-5 {
+  height: 300px;
+  padding-top: 55px;
+}
+
+@media (min-width: 992px) {
+  #pricing-block-5 {
+    height: 400px;
+    padding-top: 80px;
+  }
+}
+
+#header-section {
+  height: 180px;
+  padding-top: 55px;
+}
+
+:root {
+  --amplify-primary-color: hsl(347, 99%, 19%) 80%,
+  --amplify-primary-tint: hsl(347, 99%, 19%) 70%,
+  --amplify-primary-shade: hsl(347, 99%, 19%) 90%,
+  --amplify-components-tabs-item-active-color: hsl(347, 99%, 19%) 80%,
+  --amplify-components-tabs-item-active-border-color: hsl(347, 99%, 19%) 80%
+}
+
+#root {
+  text-align: center;
+  margin: 1.2rem;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+button.amplify-button--primary {
+    background-color: var(--amplify-components-button-primary-background-color);
+}
